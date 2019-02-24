@@ -1,6 +1,7 @@
 require("dotenv").config();
 const keys = require("./keys.js");
 const axios = require("axios");
+const fs = require('fs');
 var Spotify = require('node-spotify-api');
 const spotify = new Spotify(keys.spotify);
 const command = process.argv[2];
@@ -66,7 +67,23 @@ function movie(){
     
 };
 function doWhatItSays(){
-    console.log('working on rando');
+    fs.readFile('random.txt', 'utf8', function(err, data){
+        if(err){
+            console.log(err)
+        }
+        const read= data.split(',')
+        console.log(read[1]);
+    spotify.search({ type: 'track', query: read[1] })
+    .then(function(response) {
+      console.log('\n\n'+response.tracks.items[0].name);
+      console.log(response.tracks.items[0].uri);
+      console.log(response.tracks.items[0].album.artists[0].name);
+      console.log('----------------------------------------------------------------------\n\n')
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+    })
 };
 
 switch(command){
